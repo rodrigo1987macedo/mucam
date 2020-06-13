@@ -1,0 +1,30 @@
+version: '3'
+services:
+  frontend:
+    image: node:10
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/local/app
+    restart: always
+    working_dir: /usr/local/app
+    entrypoint: "/bin/bash"
+    command: "-c \"if [ ! -d \"node_modules\" ]; then npm i; fi; npm run dev\""
+
+  strapi:
+    image: strapi/strapi
+    depends_on: 
+      - mongo
+    links:
+      - mongo:mongo
+    volumes:
+      - ./app:/srv/app
+    ports:
+      - '1337:1337'
+
+  mongo:
+    image: mongo
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - '27017:27017'
