@@ -19,7 +19,7 @@ export async function auth(ctx) {
   }
 
   const { data } = await axios
-    .get(`${process.env.API_URL}/users/me`, {
+    .get(`http://localhost:1337/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -34,40 +34,6 @@ export async function auth(ctx) {
         Router.push("/");
       }
     });
-
-  // const { me } = await axios
-  // .get(`${process.env.API_URL}/users/me`, {
-  // headers: {
-  // Authorization: `Bearer ${token}`
-  // }
-  // })
-  // .catch(() => {
-  // if (ctx.res) {
-  // ctx.res.writeHead(302, {
-  // Location: "/"
-  // });
-  // ctx.res.end();
-  // } else {
-  // Router.push("/");
-  // }
-  // });
-
-  // const { data } = await axios
-  // .get(`${process.env.API_URL}/users/${me.id}`, {
-  // headers: {
-  // Authorization: `Bearer ${token}`
-  // }
-  // })
-  // .catch(() => {
-  // if (ctx.res) {
-  // ctx.res.writeHead(302, {
-  // Location: "/"
-  // });
-  // ctx.res.end();
-  // } else {
-  // Router.push("/");
-  // }
-  // });
 
   return data;
 }

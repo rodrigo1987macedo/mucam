@@ -57,7 +57,7 @@ export default () => {
     setEmailSent("");
     trackPromise(
       axios
-        .post(`http://localhost:1337/auth/forgot-password`, {
+        .post(`${process.env.API_URL}/auth/forgot-password`, {
           email: userIdentifier
         })
         .then(() => {
@@ -76,7 +76,7 @@ export default () => {
     setEmailSent("");
     trackPromise(
       axios
-        .post(`${process.env.API_URL}/auth/local`, {
+        .post(`http://localhost:1337/auth/local`, {
           identifier: userIdentifier,
           password: userPassword
         })

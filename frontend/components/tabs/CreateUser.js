@@ -93,7 +93,7 @@ function CreateUser() {
   useEffect(() => {
     lastUsersHandler(0, fetchedUsersQuantity);
   }, []);
-
+  
   const updateLastUsers = (res, from) => {
     let number = [].concat(from === 0 ? [] : lastUsers.number);
     let username = [].concat(from === 0 ? [] : lastUsers.username);
@@ -131,9 +131,7 @@ function CreateUser() {
     trackPromise(
       axios
         .get(
-          `${
-            process.env.API_URL
-          }/users?_sort=created_at:desc&_start=${from}&_limit=${to}`,
+          `http://localhost:1337/users?_sort=created_at:desc&_start=${from}&_limit=${to}`,
           {
             headers: {
               Authorization: `Bearer ${cookies.get("guards")}`

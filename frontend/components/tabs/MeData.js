@@ -22,11 +22,10 @@ const EmptyMessage = styled.div`
 `;
 
 function MeData({ data }) {
-  console.log("data: ", data);
   let now = new Date();
   useEffect(() => {
     axios.put(
-      `${process.env.API_URL}/users/${data.id}`,
+      `http://localhost:1337/users/${data.id}`,
       {
         seen: now.toISOString()
       },
@@ -38,9 +37,19 @@ function MeData({ data }) {
     );
   }, []);
 
+  function click() {
+    axios
+      .get(`http://localhost:1337/myfiles`, {
+        headers: {
+          Authorization: `Bearer ${cookies.get("guards")}`
+        }
+      })
+      .then(res => console.log("myfiles: ", res));
+  }
+
   return (
     <MeDataWrapper>
-      <div>#{data.number ? data.number : "-"}</div>
+      <div onClick={() => click()}>#{data.number ? data.number : "-"}</div>
       <div>{data.username ? data.username : "-"}</div>
       <div>{data.email ? data.email : "-"}</div>
       {data.file ? (
