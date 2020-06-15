@@ -73,11 +73,7 @@ function DeleteAll({ api }) {
   }
 
   return (
-    <PopUp
-      buttonText="Borrar todas las guardias"
-      secondary={true}
-      onClose={resetState}
-      small={true}
+    <
     >
       <Title
         text="Eliminar guardias"
@@ -97,7 +93,7 @@ function DeleteAll({ api }) {
           <Warning>{error}</Warning>
         </Results>
       </SafeGuard>
-    </PopUp>
+    </>
   );
 }
 

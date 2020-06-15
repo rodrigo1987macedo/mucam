@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { Cookies } from "react-cookie";
 import Button from "../common/Button";
@@ -58,10 +58,14 @@ function Edit({ id, onUpdate, api }) {
     setSuccessDeleteMessage(null);
   }
 
+  useEffect(() => {
+    fetchUser()
+  }, [])
+
   function fetchUser() {
     resetState();
     axios
-      .get(`http://localhost:1337/users/${id}`, {
+      .get(`${api}/users/${id}`, {
         headers: {
           Authorization: `Bearer ${cookies.get("guards")}`
         }
@@ -102,9 +106,9 @@ function Edit({ id, onUpdate, api }) {
   }
 
   function edit(e, user) {
-    console.log("user id: ", id);
     resetState();
     e.preventDefault();
+    console.log('user: ', user)
     trackPromise(
       axios
         .put(`${api}/users/${id}`, user, {
@@ -133,7 +137,7 @@ function Edit({ id, onUpdate, api }) {
   }
 
   return (
-    <PopUp onOpen={() => fetchUser()} buttonIcon="pen">
+    <>
       <Title
         text="Editar Funcionario"
         explanation="Este proceso modificará los datos editados del funcionario en sistema de manera definitiva"
@@ -201,7 +205,7 @@ function Edit({ id, onUpdate, api }) {
       ) : (
         <>Procesando...</>
       )}
-    </PopUp>
+    </>
   );
 }
 

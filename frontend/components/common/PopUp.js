@@ -8,9 +8,9 @@ const BaseModal = styled.div`
   overflow-y: scroll;
   padding: 5px;
   width: 700px;
-    @media (max-width: 600px) {
-      width: 280px;
-    }
+  @media (max-width: 600px) {
+    width: 280px;
+  }
 `;
 
 function PopUp({
@@ -42,11 +42,9 @@ function PopUp({
         secondary={secondary}
         icon={buttonIcon}
       />
-      {open && (
-        <Modal open={open} onClose={togglePopUp} center>
-          <BaseModal small={small}>{children}</BaseModal>
-        </Modal>
-      )}
+      <Modal open={open} onClose={togglePopUp} center>
+        <BaseModal small={small}>{children}</BaseModal>
+      </Modal>
     </>
   );
 }

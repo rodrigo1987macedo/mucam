@@ -20,11 +20,6 @@ function DeleteOne({ id, onUpdate, api }) {
   const [successMessage, setSuccessMessage] = useState();
   const [errorMessage, setErrorMessage] = useState();
 
-  function resetState() {
-    setErrorMessage(null);
-    setSuccessMessage(null);
-  }
-
   function deleteOne() {
     trackPromise(
       axios
@@ -47,12 +42,7 @@ function DeleteOne({ id, onUpdate, api }) {
   }
 
   return (
-    <PopUp
-      buttonIcon="trash"
-      secondary={true}
-      onClose={resetState}
-      small={true}
-    >
+    <>
       <Title
         text="Eliminar Funcionario"
         explanation="Este proceso eliminará el funcionario del sistema de manera definitiva"
@@ -71,7 +61,7 @@ function DeleteOne({ id, onUpdate, api }) {
           error={errorMessage}
         />
       </SafeGuard>
-    </PopUp>
+    </>
   );
 }
 

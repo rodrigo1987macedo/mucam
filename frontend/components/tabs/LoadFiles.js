@@ -10,6 +10,7 @@ import Title from "../common/Title";
 import { Cookies } from "react-cookie";
 import Reach from "../popups/Reach";
 import DeleteAll from "../popups/DeleteAll";
+import PopUp from "../common/PopUp";
 
 const cookies = new Cookies();
 
@@ -132,8 +133,16 @@ function LoadFiles() {
     <LoadFilesWrapper>
       <Title text={tabs.DOCS.LOAD} tag="h1" />
       <Section>
-        <Reach api={process.env.API_URL} />
-        <DeleteAll api={process.env.API_URL} />
+        <PopUp buttonText="Verificar alcance">
+          <Reach api={process.env.API_URL} />
+        </PopUp>
+        <PopUp
+          buttonText="Borrar todas las guardias"
+          secondary={true}
+          small={true}
+        >
+          <DeleteAll api={process.env.API_URL} />
+        </PopUp>
       </Section>
       <Section>
         {!isLoading ? (

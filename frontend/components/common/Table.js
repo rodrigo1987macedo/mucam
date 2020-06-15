@@ -6,6 +6,7 @@ import { table } from "../../constants/table";
 import DeleteOne from "../popups/DeleteOne";
 import Edit from "../popups/Edit";
 import { CopyToClipboard } from "react-copy-to-clipboard";
+import PopUp from "./PopUp";
 
 const TableWrapper = styled.div`
   display: flex;
@@ -134,16 +135,20 @@ function Table({ data, onUpdate }) {
                       })
                     ) : column.heading === table.ACTIONS ? (
                       <Actions>
-                        <Edit
-                          api={process.env.API_URL}
-                          id={item}
-                          onUpdate={() => onUpdate()}
-                        />
-                        <DeleteOne
-                          api={process.env.API_URL}
-                          id={item}
-                          onUpdate={() => onUpdate()}
-                        />
+                        <PopUp buttonIcon="pen">
+                          <Edit
+                            api={process.env.API_URL}
+                            id={item}
+                            onUpdate={() => onUpdate()}
+                          />
+                        </PopUp>
+                        <PopUp buttonIcon="trash" secondary={true} small={true}>
+                          <DeleteOne
+                            api={process.env.API_URL}
+                            id={item}
+                            onUpdate={() => onUpdate()}
+                          />
+                        </PopUp>
                       </Actions>
                     ) : column.heading === table.FILES ? (
                       <CellContent title={item.name} text={item}>

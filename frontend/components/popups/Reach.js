@@ -42,24 +42,24 @@ function Reach({ api }) {
     undefinedUsernameArr: undefined,
     undefinedEmailArr: undefined
   });
-  const [forgotenUsers, setForgotenUsers] = useState({
-    forgotenNumberArr: undefined,
-    forgotenUsernameArr: undefined,
-    forgotenEmailArr: undefined
+  const [forgottenUsers, setForgotenUsers] = useState({
+    forgottenNumberArr: undefined,
+    forgottenUsernameArr: undefined,
+    forgottenEmailArr: undefined
   });
   const [resultMessage, setResultMessage] = useState([]);
   const [errorMessage, setErrorMessage] = useState([]);
 
-  const forgotenThresholdModifier = 1;
+  const forgottenThresholdModifier = 6;
 
   // Get a date object for the current time
-  let forgotenThreshold = new Date();
+  let forgottenThreshold = new Date();
 
   // Set it to one month ago
-  forgotenThreshold.setMinutes(
-    forgotenThreshold.getMinutes() - forgotenThresholdModifier
+  forgottenThreshold.setMonth(
+    forgottenThreshold.getMonth() - forgottenThresholdModifier
   );
-
+  
   useEffect(() => {
     trackPromise(
       axios
@@ -76,38 +76,50 @@ function Reach({ api }) {
           let unreachedUsernamesArr = [];
           let unreachedEmailsArr = [];
           //
-          let forgotenNumbersArr = [];
-          let forgotenUsernamesArr = [];
-          let forgotenEmailsArr = [];
+          let forgottenNumbersArr = [];
+          let forgottenUsernamesArr = [];
+          let forgottenEmailsArr = [];
           res.data.map(item => {
-            if (
-              item.file &&
-              Date.parse(forgotenThreshold) > Date.parse(item.file.createdAt)
-            ) {
-              forgotenNumbersArr.push(item.number);
-              forgotenUsernamesArr.push(item.username);
-              forgotenEmailsArr.push(item.email);
-            }
-            if (
-              (item.file && item.seen < item.file.createdAt) ||
-              item.seen === null
-            ) {
-              unreachedArr.push(item);
-              //
-              unreachedNumbersArr.push(item.number);
-              unreachedUsernamesArr.push(item.username);
-              unreachedEmailsArr.push(item.email);
-            }
-            if (item.file && item.seen > item.file.createdAt) {
-              reachedArr.push(item);
+            let lastFile = item.file.slice(-1)[0];
+            if (lastFile) {
+              // FORGOTTEN USERS
+              if (
+                parseInt(Date.parse(lastFile.updated_at), 10) <
+                parseInt(Date.parse(forgottenThreshold), 10)
+              ) {
+                // updated_at date of last file is prior than forgottenThreshold
+                forgottenNumbersArr.push(item.number);
+                forgottenUsernamesArr.push(item.username);
+                forgottenEmailsArr.push(item.email);
+              }
+              // UNREACHED USERS
+              if (
+                parseInt(Date.parse(lastFile.updated_at), 10) >
+                parseInt(Date.parse(item.seen), 10)
+              ) {
+                // seen date is prior than updated_at of last file
+                unreachedArr.push(item);
+                //
+                unreachedNumbersArr.push(item.number);
+                unreachedUsernamesArr.push(item.username);
+                unreachedEmailsArr.push(item.email);
+              }
+              // REACHED USERS
+              if (
+                parseInt(Date.parse(lastFile.updated_at), 10) <
+                parseInt(Date.parse(item.seen), 10)
+              ) {
+                // seen date is posterior to updated_at of last file
+                reachedArr.push(item);
+              }
             }
           });
           setReached(reachedArr);
           setUnreached(unreachedArr);
           setForgotenUsers({
-            forgotenNumbersArr,
-            forgotenUsernamesArr,
-            forgotenEmailsArr
+            forgottenNumbersArr,
+            forgottenUsernamesArr,
+            forgottenEmailsArr
           });
           setUnrechedUsers({
             unreachedNumbersArr,
@@ -124,9 +136,9 @@ function Reach({ api }) {
       "reach"
     );
   }, []);
-
+console.log('hola')
   return (
-    <PopUp buttonText="Verificar alcance">
+    <>
       <Title text="Alcance de guardias" tag="h1" />
       <ReachedUsersBar
         reached={Math.round(
@@ -157,24 +169,24 @@ function Reach({ api }) {
       <Result>
         <Title
           text="Funcionarios inactivos"
-          explanation={`No se les ha cargado una guardia hace más de ${forgotenThresholdModifier} minuto`}
+          explanation={`No se les ha cargado una guardia hace más de ${forgottenThresholdModifier} meses`}
           tag="h2"
         />
         <Table
           data={[
             {
               heading: table.NUMBER,
-              content: forgotenUsers.forgotenNumbersArr
+              content: forgottenUsers.forgottenNumbersArr
             },
             {
               heading: table.NAME,
-              content: forgotenUsers.forgotenUsernamesArr
+              content: forgottenUsers.forgottenUsernamesArr
             },
-            { heading: table.MAIL, content: forgotenUsers.forgotenEmailsArr }
+            { heading: table.MAIL, content: forgottenUsers.forgottenEmailsArr }
           ]}
         />
       </Result>
-    </PopUp>
+    </>
   );
 }
 
