@@ -1,9 +1,9 @@
 {
   "routes": [
     {
-      "method": "GET",
-      "path": "/myfiles",
-      "handler": "MyFiles.find",
+      "method": "PUT",
+      "path": "/updateseen",
+      "handler": "UpdateSeen.put",
       "config": {
         "policies": ["isAuth"]
       }

@@ -22,7 +22,7 @@ function SafeGuard({ children }) {
     setErrorMessage("");
     trackPromise(
       axios
-        .post("http://localhost:1337/auth/local", {
+        .post(`${process.env.API_URL}/auth/local`, {
           identifier: "rodrigo1987macedo@gmail.com",
           password: userPassword
         })

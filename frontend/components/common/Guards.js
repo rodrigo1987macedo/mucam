@@ -77,7 +77,7 @@ function Guards({ guardsArr, canDelete }) {
       {guardsArr.map(item => {
         return (
           <Guard key={item.url}>
-            <a href={item.url} download target="_blank">
+            <a href={process.env.API_URL + item.url} target="_blank">
               <Img src="file.png" alt="guardia" />
               <GuardSection>
                 <div>Publicación:</div>

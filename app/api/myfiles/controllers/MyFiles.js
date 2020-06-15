@@ -1,9 +1,15 @@
 module.exports = {
-  // GET /hello
-  index: async ctx => {
-    if (ctx.state.user) {
-      console.log("user: ", ctx.state.user);
-    }
-    ctx.send("Hello World!");
+  find: async ctx => {
+    entity = await strapi
+      .query("user", "users-permissions")
+      .find({ id: ctx.state.user.id })
+      .then(res => {
+        return res[0].file;
+      })
+      .catch(() => {
+        return null;
+      });
+
+    ctx.send(entity);
   }
 };

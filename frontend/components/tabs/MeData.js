@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Cookies } from "react-cookie";
 import Guards from "../common/Guards";
@@ -22,10 +22,11 @@ const EmptyMessage = styled.div`
 `;
 
 function MeData({ data }) {
+  const [files, setFiles] = useState([]);
   let now = new Date();
   useEffect(() => {
     axios.put(
-      `http://localhost:1337/users/${data.id}`,
+      `${process.env.API_URL}/updateseen/`,
       {
         seen: now.toISOString()
       },
@@ -37,23 +38,23 @@ function MeData({ data }) {
     );
   }, []);
 
-  function click() {
+  useEffect(() => {
     axios
-      .get(`http://localhost:1337/myfiles`, {
+      .get(`${process.env.API_URL}/myfiles`, {
         headers: {
           Authorization: `Bearer ${cookies.get("guards")}`
         }
       })
-      .then(res => console.log("myfiles: ", res));
-  }
+      .then(res => setFiles(res.data));
+  }, []);
 
   return (
     <MeDataWrapper>
       <div onClick={() => click()}>#{data.number ? data.number : "-"}</div>
       <div>{data.username ? data.username : "-"}</div>
       <div>{data.email ? data.email : "-"}</div>
-      {data.file ? (
-        <Guards guardsArr={data.file} />
+      {files !== [] ? (
+        <Guards guardsArr={files} />
       ) : (
         <EmptyMessage>No hay guardias</EmptyMessage>
       )}

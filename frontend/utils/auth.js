@@ -19,7 +19,7 @@ export async function auth(ctx) {
   }
 
   const { data } = await axios
-    .get(`http://localhost:1337/users/me`, {
+    .get(`${process.env.API_URL}/users/me`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

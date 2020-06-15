@@ -1,9 +1,9 @@
-const Dotenv = require("dotenv-webpack");
+const { parsed: localEnv } = require("dotenv").config();
+const webpack = require("webpack");
 
 module.exports = {
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Add the new plugin to the existing webpack plugins
-    config.plugins.push(new Dotenv({ silent: true }));
+  webpack(config) {
+    config.plugins.push(new webpack.EnvironmentPlugin(localEnv));
 
     return config;
   }

@@ -131,7 +131,7 @@ function CreateUser() {
     trackPromise(
       axios
         .get(
-          `http://localhost:1337/users?_sort=created_at:desc&_start=${from}&_limit=${to}`,
+          `${process.env.API_URL}/users?_sort=created_at:desc&_start=${from}&_limit=${to}`,
           {
             headers: {
               Authorization: `Bearer ${cookies.get("guards")}`
