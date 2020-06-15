@@ -28,14 +28,13 @@ const response = {
     trackPromise(
       axios
         .post(`${process.env.API_URL}/auth/local`, {
-          identifier: "rodrigo1987macedo@gmail.com",
+          identifier: "gonzalo2510@adinet.com.uy",
           password: userPassword
         })
         .then(() => {
           setIsSure(true);
         })
         .catch(err => {
-          console.log("err: ", err.response.status);
           if (err.response.status === 400) {
             setErrorMessage(response.ERROR_PASSWORD);
           } else {
