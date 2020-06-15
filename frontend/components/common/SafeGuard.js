@@ -17,7 +17,12 @@ function SafeGuard({ children }) {
   const [userPassword, setUserPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  async function handleSubmit(e) {
+const response = {
+  ERROR_PASSWORD: "Clave incorrecta",
+  ERROR_SERVER: "Ha ocurrido un error",
+};
+
+  function handleSubmit(e) {
     e.preventDefault();
     setErrorMessage("");
     trackPromise(
@@ -29,8 +34,13 @@ function SafeGuard({ children }) {
         .then(() => {
           setIsSure(true);
         })
-        .catch(() => {
-          setErrorMessage("Clave incorrecta");
+        .catch(err => {
+          console.log("err: ", err.response.status);
+          if (err.response.status === 400) {
+            setErrorMessage(response.ERROR_PASSWORD);
+          } else {
+            setErrorMessage(response.ERROR_SERVER);
+          }
         }),
       "safe-guard"
     );

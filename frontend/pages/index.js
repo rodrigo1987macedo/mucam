@@ -64,7 +64,7 @@ export default () => {
           setEmailSent("Se ha enviado un mail a tu casilla de correo");
         })
         .catch(err => {
-          console.log("err: ", err.response.status);
+          // console.log("err: ", err.response.status);
           setErrorMessage("Error en el servidor");
         })
     );
@@ -87,7 +87,7 @@ export default () => {
           }
         })
         .catch(err => {
-          if (err.response) {
+          if (err.response.status === 400) {
             setErrorMessage("Usuario o clave incorrectos");
           } else {
             setErrorMessage("Error en el servidor");

@@ -23,7 +23,9 @@ const EmptyMessage = styled.div`
 
 function MeData({ data }) {
   const [files, setFiles] = useState([]);
+
   let now = new Date();
+
   useEffect(() => {
     axios.put(
       `${process.env.API_URL}/updateseen/`,

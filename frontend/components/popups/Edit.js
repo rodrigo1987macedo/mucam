@@ -35,13 +35,17 @@ const Form = styled.form`
 `;
 
 const EmptyMessage = styled.div`
+  margin: 0 0 10px 0;
   color: ${props => props.theme.colors.process};
 `;
 
 const process = {
-  FINISHED: "Funcionario modificado con éxito",
-  ERROR: "Ha ocurrido un error",
-  RUNNING: "Modificando..."
+  EDITED: "Funcionario modificado con éxito",
+  DELETED: "Guardia eliminada con éxito",
+  ERROR_DATA: "Error en campos editados",
+  ERROR_SERVER: "Ha ocurrido un error",
+  RUNNING: "Modificando...",
+  LOADING: "Cargando datos..."
 };
 
 function Edit({ id, onUpdate, api }) {
@@ -50,20 +54,13 @@ function Edit({ id, onUpdate, api }) {
   const [errorEditMessage, setErrorEditMessage] = useState();
   const [successDeleteMessage, setSuccessDeleteMessage] = useState();
   const [errorDeleteMessage, setErrorDeleteMessage] = useState();
-
-  function resetState() {
-    setErrorEditMessage(null);
-    setSuccessEditMessage(null);
-    setErrorDeleteMessage(null);
-    setSuccessDeleteMessage(null);
-  }
+  const [errorUserMessage, setErrorUserMessage] = useState();
 
   useEffect(() => {
-    fetchUser()
-  }, [])
+    fetchUser();
+  }, []);
 
   function fetchUser() {
-    resetState();
     axios
       .get(`${api}/users/${id}`, {
         headers: {
@@ -79,11 +76,15 @@ function Edit({ id, onUpdate, api }) {
           files: res.data.file
         };
         setUser(data);
+      })
+      .catch(() => {
+        setErrorUserMessage(process.ERROR_SERVER);
       });
   }
 
   function deleteGuard(id) {
-    resetState();
+    setErrorDeleteMessage(null);
+    setSuccessDeleteMessage(null);
     trackPromise(
       axios
         .delete(`${api}/upload/files/${id}`, {
@@ -93,12 +94,12 @@ function Edit({ id, onUpdate, api }) {
         })
         .then(() => {
           setErrorDeleteMessage(null);
-          setSuccessDeleteMessage(process.FINISHED);
+          setSuccessDeleteMessage(process.DELETED);
+          fetchUser()
           onUpdate();
-          fetchUser();
         })
         .catch(() => {
-          setErrorDeleteMessage(process.ERROR);
+          setErrorDeleteMessage(response.ERROR_SERVER);
           setSuccessDeleteMessage(null);
         }),
       "delete"
@@ -106,9 +107,9 @@ function Edit({ id, onUpdate, api }) {
   }
 
   function edit(e, user) {
-    resetState();
+    setErrorEditMessage(null);
+    setSuccessEditMessage(null);
     e.preventDefault();
-    console.log('user: ', user)
     trackPromise(
       axios
         .put(`${api}/users/${id}`, user, {
@@ -117,12 +118,16 @@ function Edit({ id, onUpdate, api }) {
           }
         })
         .then(() => {
-          setSuccessEditMessage(process.FINISHED);
+          setSuccessEditMessage(process.EDITED);
           setErrorEditMessage(null);
           onUpdate();
         })
         .catch(() => {
-          setErrorEditMessage(process.ERROR);
+          if (err.response.status === 400) {
+            setErrorEditMessage(process.ERROR_DATA);
+          } else {
+            setErrorEditMessage(process.ERROR_SERVER);
+          }
           setSuccessEditMessage(null);
         }),
       "edit"
@@ -202,8 +207,10 @@ function Edit({ id, onUpdate, api }) {
             error={errorDeleteMessage}
           />
         </>
+      ) : errorUserMessage ? (
+        <>{errorUserMessage}</>
       ) : (
-        <>Procesando...</>
+        <>{process.LOADING}</>
       )}
     </>
   );

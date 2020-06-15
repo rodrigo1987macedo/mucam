@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { Cookies } from "react-cookie";
 import Button from "../common/Button";
 import Title from "../common/Title";
-import PopUp from "../common/PopUp";
 import SafeGuard from "../common/SafeGuard";
 import Loader from "../common/Loader";
 import { trackPromise } from "react-promise-tracker";
@@ -13,7 +12,6 @@ const cookies = new Cookies();
 const process = {
   FINISHED: "Funcionario eliminado",
   ERROR: "Ha ocurrido un error",
-  RUNNING: "Eliminando..."
 };
 
 function DeleteOne({ id, onUpdate, api }) {

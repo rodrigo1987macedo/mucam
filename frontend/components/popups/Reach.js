@@ -47,8 +47,8 @@ function Reach({ api }) {
     forgottenUsernameArr: undefined,
     forgottenEmailArr: undefined
   });
-  const [resultMessage, setResultMessage] = useState([]);
-  const [errorMessage, setErrorMessage] = useState([]);
+  const [resultMessage, setResultMessage] = useState();
+  const [errorMessage, setErrorMessage] = useState();
 
   const forgottenThresholdModifier = 6;
 
@@ -131,12 +131,12 @@ function Reach({ api }) {
           );
         })
         .catch(() => {
-          // console.log("error");
+          setErrorMessage("Ha ocurrido un error")
         }),
       "reach"
     );
   }, []);
-console.log('hola')
+
   return (
     <>
       <Title text="Alcance de guardias" tag="h1" />
@@ -145,7 +145,7 @@ console.log('hola')
           (reached.length / (reached.length + unreached.length)) * 100
         )}
       />
-      <Loader success={resultMessage} area="reach" />
+      <Loader success={resultMessage} error={errorMessage} area="reach" />
       <Result>
         <Title
           text="Funcionarios no enterados"
