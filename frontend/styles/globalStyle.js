@@ -41,12 +41,6 @@ html {
   -moz-box-sizing: inherit;
   box-sizing: inherit;
 }
-button:focus, input:focus {
-  outline-style: solid;
-  outline-width: thin;
-  outline-color: #214B8B;
-  border: 1px solid transparent;
-}
 `;
 
 export default GlobalStyle;
