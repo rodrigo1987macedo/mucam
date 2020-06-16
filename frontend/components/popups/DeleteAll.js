@@ -6,15 +6,9 @@ import Title from "../common/Title";
 import Loader from "../common/Loader";
 import { trackPromise } from "react-promise-tracker";
 import SafeGuard from "../common/SafeGuard";
+import { status } from '../../constants/status'
 
 const cookies = new Cookies();
-
-const process = {
-  FINISHED: "Proceso terminado",
-  ERROR:
-    "Error en el servidor. Algunas guardias no han sido borradas, intente correr el proceso de nuevo una vez terminado",
-  RUNNING: "Eliminando"
-};
 
 function DeleteAll({ api }) {
   const [successMessage, setSuccessMessage] = useState();
@@ -37,17 +31,17 @@ function DeleteAll({ api }) {
                 }
               })
               .then(deleted => {
-                setSuccessMessage(`${process.RUNNING}: ${deleted.data.name}`);
+                setSuccessMessage(`${status.PROCESS_DELETING}: ${deleted.data.name}`);
               })
               .catch(() => {
-                setErrorMessage(process.ERROR);
+                setErrorMessage(status.ERROR_GUARDS_DELETION);
               })
               .finally(() => recursiveDeletionChain());
           } else {
-            setSuccessMessage(process.FINISHED);
+            setSuccessMessage(status.PROCESS_GUARDS_DELETION_FINISHED);
           }
         })
-        .catch(() => setErrorMessage(process.ERROR)),
+        .catch(() => setErrorMessage(status.ERROR_GUARDS_DELETION)),
       "delete-all"
     );
   }

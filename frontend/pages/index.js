@@ -9,6 +9,7 @@ import Input from "../components/common/Input";
 import Loader from "../components/common/Loader";
 import Title from "../components/common/Title";
 import Layout from "../components/common/Layout";
+import { status } from "../constants/status"
 
 const FormWrapper = styled.div`
   display: flex;
@@ -61,11 +62,14 @@ export default () => {
           email: userIdentifier
         })
         .then(() => {
-          setEmailSent("Se ha enviado un mail a tu casilla de correo");
+          setEmailSent(status.SENT_EMAIL);
         })
         .catch(err => {
-          // console.log("err: ", err.response.status);
-          setErrorMessage("Error en el servidor");
+          if (err.response.status === 400) {
+            setErrorMessage(status.ERROR_EMAIL_ENTRY);
+          } else {
+            setErrorMessage(status.ERROR_SERVER);
+          }
         })
     );
   }
@@ -88,9 +92,9 @@ export default () => {
         })
         .catch(err => {
           if (err.response.status === 400) {
-            setErrorMessage("Usuario o clave incorrectos");
+            setErrorMessage(status.ERROR_DATA);
           } else {
-            setErrorMessage("Error en el servidor");
+            setErrorMessage(status.ERROR_SERVER);
           }
         })
     );

@@ -4,11 +4,11 @@ import styled from "styled-components";
 import { Cookies } from "react-cookie";
 import Button from "../common/Button";
 import Title from "../common/Title";
-import PopUp from "../common/PopUp";
 import Input from "../common/Input";
 import { trackPromise } from "react-promise-tracker";
 import Loader from "../common/Loader";
 import Guards from "../common/Guards";
+import { status } from '../../constants/status'
 
 const cookies = new Cookies();
 
@@ -38,15 +38,6 @@ const EmptyMessage = styled.div`
   margin: 0 0 10px 0;
   color: ${props => props.theme.colors.process};
 `;
-
-const process = {
-  EDITED: "Funcionario modificado con éxito",
-  DELETED: "Guardia eliminada con éxito",
-  ERROR_DATA: "Error en campos editados",
-  ERROR_SERVER: "Ha ocurrido un error",
-  RUNNING: "Modificando...",
-  LOADING: "Cargando datos..."
-};
 
 function Edit({ id, onUpdate, api }) {
   const [user, setUser] = useState();
@@ -78,7 +69,7 @@ function Edit({ id, onUpdate, api }) {
         setUser(data);
       })
       .catch(() => {
-        setErrorUserMessage(process.ERROR_SERVER);
+        setErrorUserMessage(status.ERROR_SERVER);
       });
   }
 
@@ -94,12 +85,12 @@ function Edit({ id, onUpdate, api }) {
         })
         .then(() => {
           setErrorDeleteMessage(null);
-          setSuccessDeleteMessage(process.DELETED);
+          setSuccessDeleteMessage(status.PROCESS_GUARDS_DELETION_FINISHED);
           fetchUser()
           onUpdate();
         })
         .catch(() => {
-          setErrorDeleteMessage(response.ERROR_SERVER);
+          setErrorDeleteMessage(status.ERROR_SERVER);
           setSuccessDeleteMessage(null);
         }),
       "delete"
@@ -118,15 +109,15 @@ function Edit({ id, onUpdate, api }) {
           }
         })
         .then(() => {
-          setSuccessEditMessage(process.EDITED);
+          setSuccessEditMessage(status.PROCESS_USER_EDITION_FINISHED);
           setErrorEditMessage(null);
           onUpdate();
         })
         .catch(() => {
           if (err.response.status === 400) {
-            setErrorEditMessage(process.ERROR_DATA);
+            setErrorEditMessage(status.ERROR_DATA);
           } else {
-            setErrorEditMessage(process.ERROR_SERVER);
+            setErrorEditMessage(status.ERROR_SERVER);
           }
           setSuccessEditMessage(null);
         }),
@@ -210,7 +201,7 @@ function Edit({ id, onUpdate, api }) {
       ) : errorUserMessage ? (
         <>{errorUserMessage}</>
       ) : (
-        <>{process.LOADING}</>
+        <>{status.PENDING}</>
       )}
     </>
   );

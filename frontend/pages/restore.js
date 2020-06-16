@@ -56,8 +56,12 @@ function Restore({ privateCode }) {
             router.push("/admin");
           }
         })
-        .catch(() => {
-          setErrorMessage("Error en el servidor");
+        .catch(err => {
+          if (err.response.status === 400) {
+            setErrorMessage("Error en algún campo ingresado");
+          } else {
+            setErrorMessage("Error en el servidor");
+          }
         })
     );
   }

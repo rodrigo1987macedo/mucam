@@ -6,13 +6,9 @@ import Title from "../common/Title";
 import SafeGuard from "../common/SafeGuard";
 import Loader from "../common/Loader";
 import { trackPromise } from "react-promise-tracker";
+import { status } from '../../constants/status'
 
 const cookies = new Cookies();
-
-const process = {
-  FINISHED: "Funcionario eliminado",
-  ERROR: "Ha ocurrido un error",
-};
 
 function DeleteOne({ id, onUpdate, api }) {
   const [successMessage, setSuccessMessage] = useState();
@@ -28,11 +24,11 @@ function DeleteOne({ id, onUpdate, api }) {
         })
         .then(() => {
           setErrorMessage(null);
-          setSuccessMessage(process.FINISHED);
+          setSuccessMessage(status.PROCESS_USER_DELETION_FINISHED);
           onUpdate();
         })
         .catch(() => {
-          setErrorMessage(process.ERROR);
+          setErrorMessage(status.ERROR);
           setSuccessMessage(null);
         }),
       "delete-one"

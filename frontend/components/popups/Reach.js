@@ -7,7 +7,7 @@ import { trackPromise } from "react-promise-tracker";
 import Loader from "../common/Loader";
 import Table from "../common/Table";
 import { table } from "../../constants/table";
-import PopUp from "../common/PopUp";
+import { status } from "../../constants/status";
 
 const cookies = new Cookies();
 
@@ -59,7 +59,7 @@ function Reach({ api }) {
   forgottenThreshold.setMonth(
     forgottenThreshold.getMonth() - forgottenThresholdModifier
   );
-  
+
   useEffect(() => {
     trackPromise(
       axios
@@ -94,8 +94,9 @@ function Reach({ api }) {
               }
               // UNREACHED USERS
               if (
+                !item.seen ||
                 parseInt(Date.parse(lastFile.updated_at), 10) >
-                parseInt(Date.parse(item.seen), 10)
+                  parseInt(Date.parse(item.seen), 10)
               ) {
                 // seen date is prior than updated_at of last file
                 unreachedArr.push(item);
@@ -131,7 +132,7 @@ function Reach({ api }) {
           );
         })
         .catch(() => {
-          setErrorMessage("Ha ocurrido un error")
+          setErrorMessage(status.ERROR_SERVER);
         }),
       "reach"
     );

@@ -5,6 +5,7 @@ import Button from "./Button";
 import Input from "./Input";
 import Loader from "./Loader";
 import { trackPromise } from "react-promise-tracker";
+import { status } from '../../constants/status'
 
 const SafeGuardWrapper = styled.div`
   input {
@@ -16,11 +17,6 @@ function SafeGuard({ children }) {
   const [isSure, setIsSure] = useState(false);
   const [userPassword, setUserPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-
-const response = {
-  ERROR_PASSWORD: "Clave incorrecta",
-  ERROR_SERVER: "Ha ocurrido un error",
-};
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -36,9 +32,9 @@ const response = {
         })
         .catch(err => {
           if (err.response.status === 400) {
-            setErrorMessage(response.ERROR_PASSWORD);
+            setErrorMessage(status.ERROR_DATA);
           } else {
-            setErrorMessage(response.ERROR_SERVER);
+            setErrorMessage(status.ERROR_SERVER);
           }
         }),
       "safe-guard"

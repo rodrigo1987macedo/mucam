@@ -58,7 +58,7 @@ function CreateUser() {
     ci: undefined
   });
   // Error message for Find User
-  const [errorMessageFoundUser, setErrorMessageFoundUser] = useState();
+  const [errorFoundUserMessage, setErrorFoundUserMessage] = useState();
 
   ////// CREATE USER
   // Create User initial state
@@ -70,7 +70,7 @@ function CreateUser() {
     password: ""
   });
   // Error message for Create User
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorCreateUserMessage, setErrorCreateUserMessage] = useState(null);
 
   ////// LAST USERS
   // Object with all categories from a Last Users containing
@@ -149,7 +149,7 @@ function CreateUser() {
 
   function createUserHandler(e) {
     e.preventDefault();
-    setErrorMessage("");
+    setErrorCreateUserMessage("");
     let newUser = createUser;
     newUser.password = createUser.ci;
     trackPromise(
@@ -169,13 +169,19 @@ function CreateUser() {
             password: ""
           });
         })
-        .catch(() => setErrorMessage(status.ERROR)),
+        .catch(err => {
+          if (err.response.status === 400) {
+            setErrorCreateUserMessage(status.ERROR_DATA);
+          } else {
+            setErrorCreateUserMessage(status.ERROR_SERVER);
+          }
+        }),
       "create-user"
     );
   }
 
   function findUser(employeeNumber) {
-    setErrorMessageFoundUser(null);
+    setErrorFoundUserMessage(null);
     trackPromise(
       axios
         .get(`${process.env.API_URL}/users?number=${employeeNumber}`, {
@@ -185,7 +191,7 @@ function CreateUser() {
         })
         .then(res => {
           if (res.data.length === 0) {
-            setErrorMessageFoundUser(status.ERROR_USER);
+            setErrorFoundUserMessage(status.ERROR_USER);
           }
           let number = [];
           let username = [];
@@ -211,7 +217,11 @@ function CreateUser() {
           });
         })
         .catch(() => {
-          setErrorMessageFoundUser(status.ERROR_SERVER);
+          if (err.response.status === 400) {
+          setErrorFoundUserMessage(status.USER);
+          } else {
+          setErrorFoundUserMessage(status.ERROR_SERVER);
+          }
         }),
       "find-user"
     );
@@ -253,7 +263,7 @@ function CreateUser() {
         />
         <Button text={tabs.USERS.FIND} />
       </Form>
-      <Loader error={errorMessageFoundUser} area="find-user" />
+      <Loader error={errorFoundUserMessage} area="find-user" />
       <Table
         onUpdate={() => updateFoundUsers(0, fetchedUsersQuantity)}
         data={[
@@ -302,7 +312,7 @@ function CreateUser() {
         />
         <Button text={tabs.USERS.CREATE} />
       </Form>
-      <Loader error={errorMessage} area="create-user" />
+      <Loader error={errorCreateUserMessage} area="create-user" />
       <Title text={tabs.USERS.HISTORY} tag="h2" />
       <Table
         onUpdate={() => updateFoundUsers(0, fetchedUsersQuantity)}

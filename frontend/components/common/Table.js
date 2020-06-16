@@ -44,11 +44,11 @@ const TableContent = styled.div`
   height: 46px;
   border-bottom: 1px solid ${props => props.theme.colors.border1};
   color: ${props =>
-    props.status === status.PENDING
+    props.status === status.PROCESS_PENDING
       ? props.theme.colors.process
-      : props.status === status.SUCCESS
+      : props.status === status.PROCESS_SUCCESS
       ? props.theme.colors.success
-      : props.status === status.WARNING
+      : props.status === status.PROCESS_WARNING
       ? props.theme.colors.warning
       : props.status === status.ERROR
       ? props.theme.colors.error
