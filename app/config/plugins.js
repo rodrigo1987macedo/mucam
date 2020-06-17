@@ -2,7 +2,7 @@ module.exports = ({ env }) => ({
   email: {
     provider: "mailgun",
     providerOptions: {
-      apiKey: 'not-th-key'
+      apiKey: env("MAILGUN_KEY")
     },
     settings: {
       defaultFrom: "no-responder@medica-uruguaya.com.uy",
