@@ -1,4 +1,5 @@
 module.exports = ({ env }) => ({
+  // MAILGUN
   email: {
     provider: "mailgun",
     providerOptions: {
