@@ -1,15 +1,24 @@
-version: '3'
+version: '3.7'
 services:
-  frontend:
-    image: node:10
+  nginx:
+    build: ./nginx/
+    depends_on:
+      - frontend
     ports:
-      - 3000:3000
+      - 80:80
+  
+  frontend:
+    working_dir: /usr/local/app
+    restart: always
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
     volumes:
       - ./frontend:/usr/local/app
-    restart: always
-    working_dir: /usr/local/app
-    entrypoint: "/bin/bash"
-    command: "-c \"if [ ! -d \"node_modules\" ]; then npm i; fi; npm run dev\""
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+    ports:
+      - 3000:3000
 
   strapi:
     image: strapi/strapi
@@ -17,14 +26,16 @@ services:
       - mongo
     links:
       - mongo:mongo
+    # environment:
+      # - NODE_ENV=production
     volumes:
       - ./app:/srv/app
     ports:
-      - '1337:1337'
+      - 1337:1337
 
   mongo:
     image: mongo
     volumes:
       - ./data/db:/data/db
     ports:
-      - '27017:27017'
+      - 27017:27017

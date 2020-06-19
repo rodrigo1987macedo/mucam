@@ -64,7 +64,7 @@ function LoadFiles() {
     }
 
     if (nextFile) {
-      setLoadingStatus(nextFileIndex, status.PENDING);
+      setLoadingStatus(nextFileIndex, status.PROCESS_PENDING);
       let deleteError = false;
       return axios
         .get(`${process.env.API_URL}/users?number=${getUserNumber(nextFile)}`, {
@@ -100,16 +100,16 @@ function LoadFiles() {
               })
               .then(() => {
                 if (deleteError) {
-                  setLoadingStatus(nextFileIndex, status.WARNING);
+                  setLoadingStatus(nextFileIndex, status.PROCESS_WARNING);
                 } else {
-                  setLoadingStatus(nextFileIndex, status.SUCCESS);
+                  setLoadingStatus(nextFileIndex, status.PROCESS_SUCCESS);
                 }
               })
               .catch(() => setLoadingStatus(nextFileIndex, status.ERROR))
               .finally(() => recursiveUploadChain(files));
           }
         })
-        .then(() => setLoadingStatus(nextFileIndex, status.SUCCESS))
+        .then(() => setLoadingStatus(nextFileIndex, status.PROCESS_SUCCESS))
         .catch(() => setLoadingStatus(nextFileIndex, status.ERROR))
         .finally(() => recursiveUploadChain(files));
     } else {
@@ -122,7 +122,7 @@ function LoadFiles() {
     let filesStatus = [];
     Object.values(event.target.files).map(file => {
       files.push(file);
-      filesStatus.push(status.READY);
+      filesStatus.push(status.PROCESS_READY);
     });
     setFilesToBeLoaded(files);
     setFilesToBeLoadedStatus(filesStatus);
