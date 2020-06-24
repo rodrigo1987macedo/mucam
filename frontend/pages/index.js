@@ -9,14 +9,14 @@ import Input from "../components/common/Input";
 import Loader from "../components/common/Loader";
 import Title from "../components/common/Title";
 import Layout from "../components/common/Layout";
-import { status } from "../constants/status"
+import { status } from "../constants/status";
 
 const FormWrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: 100vw;
+  width: 100%;
   height: 100vh;
   input {
     margin: 0 0 10px 0;

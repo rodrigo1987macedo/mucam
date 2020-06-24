@@ -13,7 +13,9 @@ const TableWrapper = styled.div`
   width: 100%;
   min-height: 85px;
   border-bottom: 1px solid ${props => props.theme.colors.border2};
-  overflow: scroll;
+  @media (max-width: 100px) {
+    overflow: scroll;
+  }
   > div {
     flex: 1;
     overflow: hidden;
