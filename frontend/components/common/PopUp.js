@@ -7,8 +7,11 @@ const BaseModal = styled.div`
   height: ${props => (props.small ? "260px" : "80vh")};
   padding: 5px;
   width: 700px;
-  @media (max-width: 600px) {
-    width: 280px;
+  @media (max-width: 800px) {
+    width: 400px;
+  }
+  @media (max-width: 400px) {
+    width: 240px;
   }
 `;
 
