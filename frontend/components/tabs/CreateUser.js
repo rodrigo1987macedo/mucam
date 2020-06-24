@@ -110,8 +110,8 @@ function CreateUser() {
         username.push(item.username);
         email.push(item.email);
         ci.push(item.ci);
-        updated.push(item.updatedAt);
-        created.push(item.createdAt);
+        updated.push(item.updated_at);
+        created.push(item.created_at);
         id.push(item.id);
       }
     });
