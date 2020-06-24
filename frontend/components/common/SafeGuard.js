@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Button from "./Button";
 import Input from "./Input";
 import Loader from "./Loader";
 import { trackPromise } from "react-promise-tracker";
-import { status } from '../../constants/status'
+import { status } from "../../constants/status";
+import { Cookies } from "react-cookie";
+
+const cookies = new Cookies();
 
 const SafeGuardWrapper = styled.div`
   input {
@@ -17,6 +20,19 @@ function SafeGuard({ children }) {
   const [isSure, setIsSure] = useState(false);
   const [userPassword, setUserPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [userIdentifier, setUserIdentifier] = useState("");
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.API_URL}/users/me`, {
+        headers: {
+          Authorization: `Bearer ${cookies.get("guards")}`
+        }
+      })
+      .then(res => {
+        setUserIdentifier(res.data.email);
+      });
+  });
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -24,7 +40,7 @@ function SafeGuard({ children }) {
     trackPromise(
       axios
         .post(`${process.env.API_URL}/auth/local`, {
-          identifier: "gonzalo2510@adinet.com.uy",
+          identifier: userIdentifier,
           password: userPassword
         })
         .then(() => {

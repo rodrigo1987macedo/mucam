@@ -5,7 +5,6 @@ import styled from "styled-components";
 
 const BaseModal = styled.div`
   height: ${props => (props.small ? "260px" : "80vh")};
-  overflow-y: scroll;
   padding: 5px;
   width: 700px;
   @media (max-width: 600px) {

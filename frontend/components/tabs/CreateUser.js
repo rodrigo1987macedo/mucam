@@ -12,14 +12,14 @@ import Loader from "../common/Loader";
 import Table from "../common/Table";
 import Title from "../common/Title";
 
+const cookies = new Cookies();
+
 const Br = styled.div`
   width: 100%;
   height: 3px;
   background: ${props => props.theme.colors.process};
   margin: 45px 0 40px 0;
 `;
-
-const cookies = new Cookies();
 
 const FetchMore = styled.div`
   text-align: center;
@@ -218,9 +218,9 @@ function CreateUser() {
         })
         .catch(() => {
           if (err.response.status === 400) {
-          setErrorFoundUserMessage(status.USER);
+            setErrorFoundUserMessage(status.USER);
           } else {
-          setErrorFoundUserMessage(status.ERROR_SERVER);
+            setErrorFoundUserMessage(status.ERROR_SERVER);
           }
         }),
       "find-user"
