@@ -44,7 +44,7 @@ const Form = styled.form`
   }
 `;
 
-function CreateUser() {
+function CreateUser({ defaultLastUsers = 5 }) {
   //
   ////// FIND USER
   // Find User initial state
@@ -91,7 +91,7 @@ function CreateUser() {
   const [showMoreLastUsersButton, setShowMoreLastUsersButton] = useState(true);
 
   useEffect(() => {
-    lastUsersHandler(0, fetchedUsersQuantity);
+    lastUsersHandler(0);
   }, []);
 
   const updateLastUsers = (res, from) => {
@@ -103,8 +103,10 @@ function CreateUser() {
     let created = [].concat(from === 0 ? [] : lastUsers.created);
     let id = [].concat(from === 0 ? [] : lastUsers.id);
     res.data.map(item => {
-      if (item.number == 1) {
-        setShowMoreLastUsersButton(false);
+      if (item.role.name === "Admin") {
+        if (item.number === "1") {
+          setShowMoreLastUsersButton(false);
+        }
       } else {
         number.push(item.number);
         username.push(item.username);
@@ -127,13 +129,13 @@ function CreateUser() {
     return updatedLastUsers;
   };
 
-  function lastUsersHandler(from, to) {
+  function lastUsersHandler(from) {
     trackPromise(
       axios
         .get(
           `${
             process.env.API_URL
-          }/users?_sort=created_at:desc&_start=${from}&_limit=${to}`,
+          }/users?_sort=created_at:desc&_start=${from}&_limit=${defaultLastUsers}`,
           {
             headers: {
               Authorization: `Bearer ${cookies.get("guards")}`
@@ -160,7 +162,7 @@ function CreateUser() {
           }
         })
         .then(() => {
-          lastUsersHandler(0, fetchedUsersQuantity);
+          lastUsersHandler(0);
           setCreateUser({
             username: "",
             number: "",
@@ -234,9 +236,9 @@ function CreateUser() {
     });
   }
 
-  function updateFoundUsers(from, to) {
-    lastUsersHandler(from, to);
-    setFetchedUserQuantity(to);
+  function updateFoundUsers(from) {
+    lastUsersHandler(from);
+    setFetchedUserQuantity(from + defaultLastUsers);
     findUserNumber && findUser(findUserNumber);
   }
 
@@ -265,7 +267,7 @@ function CreateUser() {
       </Form>
       <Loader error={errorFoundUserMessage} area="find-user" />
       <Table
-        onUpdate={() => updateFoundUsers(0, fetchedUsersQuantity)}
+        onUpdate={() => updateFoundUsers(0)}
         data={[
           { heading: table.NUMBER, content: foundUser.number },
           { heading: table.NAME, content: foundUser.username },
@@ -315,7 +317,7 @@ function CreateUser() {
       <Loader error={errorCreateUserMessage} area="create-user" />
       <Title text={tabs.USERS.HISTORY} tag="h2" />
       <Table
-        onUpdate={() => updateFoundUsers(0, fetchedUsersQuantity)}
+        onUpdate={() => updateFoundUsers(0)}
         data={[
           { heading: table.NUMBER, content: lastUsers.number },
           { heading: table.NAME, content: lastUsers.username },
@@ -330,9 +332,7 @@ function CreateUser() {
         <>
           <FetchMore>
             <Button
-              onClick={() =>
-                updateFoundUsers(fetchedUsersQuantity, fetchedUsersQuantity + 1)
-              }
+              onClick={() => updateFoundUsers(fetchedUsersQuantity)}
               text="Cargar más"
             />
           </FetchMore>
