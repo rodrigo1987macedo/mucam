@@ -78,7 +78,7 @@ const Guard = styled.a`
   overflow: visible;
 `;
 
-const Month = styled(Moment)`
+const Month = styled.div`
   position: absolute;
   top: -7px;
   right: 8px;
@@ -87,11 +87,14 @@ const Month = styled(Moment)`
   align-items: center;
   width: 18px;
   height: 18px;
-  font-size: 8px;
+  font-size: 9px;
   background: ${props => props.theme.colors.dark};
   border-radius: 100%;
   color: ${props => props.theme.colors.background1};
   line-height: 6px;
+  > div {
+    transform: translate(1px, 1px);
+  }
 `;
 
 const Img = styled.img`
@@ -123,12 +126,13 @@ function Table({ data, onUpdate }) {
                             text={item}
                           >
                             <Guard
-                              cl={console.log(guard.url)}
                               href={process.env.API_URL + guard.url}
                               target="_blank"
                             >
-                              <Month format="MM" locale="es">
-                                <div>{guard.created_at}</div>
+                              <Month>
+                                <div>
+                                  {guard.name.split(".")[0].split("-")[1]}
+                                </div>
                               </Month>
                               <Img src="file.png" alt="guardia" />
                             </Guard>
