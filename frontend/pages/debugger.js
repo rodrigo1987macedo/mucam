@@ -7,6 +7,7 @@ const cookies = new Cookies();
 
 function Debugger() {
   const [usersInfo, setUsersInfo] = useState([]);
+  const [start, setStart] = useState(0);
 
   function updateUsers() {
     usersInfo.map(info => {
@@ -30,7 +31,7 @@ function Debugger() {
 
   function getUsers() {
     axios
-      .get(`${process.env.API_URL}/users?_limit=-1`, {
+      .get(`${process.env.API_URL}/users?_start=${start}&_limit=100`, {
         headers: {
           Authorization: `Bearer ${cookies.get("guards")}`
         }
@@ -54,9 +55,15 @@ function Debugger() {
     console.log(usersInfo);
   }
 
+  function handleInput(event) {
+    setStart(event.target.value);
+  }
+
   return (
     <>
       <Title text="Debugger" tag="h1" />
+      <input type="text" onChange={handleInput} value={start} />
+      {start}
       <button onClick={() => getUsers()}>getUsers</button>
       <button onClick={() => seeUsersInfo()}>seeUsersInfo</button>
       <button onClick={() => updateUsers()}>updateUsers</button>
