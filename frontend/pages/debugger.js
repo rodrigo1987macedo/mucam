@@ -30,7 +30,7 @@ function Debugger() {
 
   function getUsers() {
     axios
-      .get(`${process.env.API_URL}/users`, {
+      .get(`${process.env.API_URL}/findall`, {
         headers: {
           Authorization: `Bearer ${cookies.get("guards")}`
         }
@@ -48,7 +48,7 @@ function Debugger() {
         });
         console.log("usersInfoArray: ", usersInfoArray);
         setUsersInfo(usersInfoArray);
-      })
+      });
   }
 
   return (
