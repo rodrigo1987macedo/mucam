@@ -30,7 +30,7 @@ function Debugger() {
 
   function getUsers() {
     axios
-      .get(`${process.env.API_URL}/users?_limit=2000`, {
+      .get(`${process.env.API_URL}/findall`, {
         headers: {
           Authorization: `Bearer ${cookies.get("guards")}`
         }
