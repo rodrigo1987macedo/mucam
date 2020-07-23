@@ -100,7 +100,7 @@ function Admin({ data }) {
             </Tabs>
           )}
           <AdminDisplay>
-            <div>Bienvenido, {data.username}</div>
+            <div>Bienvenido, {data.name}</div>
             <Tab onClick={() => logout()}>Cerrar sesión</Tab>
           </AdminDisplay>
         </NavbarSection>

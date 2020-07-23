@@ -89,7 +89,7 @@ function Reach({ api }) {
               ) {
                 // updated_at date of last file is prior than forgottenThreshold
                 forgottenNumbersArr.push(item.number);
-                forgottenUsernamesArr.push(item.username);
+                forgottenUsernamesArr.push(item.name);
                 forgottenEmailsArr.push(item.email);
               }
               // UNREACHED USERS
@@ -102,7 +102,7 @@ function Reach({ api }) {
                 unreachedArr.push(item);
                 //
                 unreachedNumbersArr.push(item.number);
-                unreachedUsernamesArr.push(item.username);
+                unreachedUsernamesArr.push(item.name);
                 unreachedEmailsArr.push(item.email);
               }
               // REACHED USERS

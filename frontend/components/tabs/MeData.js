@@ -92,7 +92,7 @@ function MeData({ data }) {
   return (
     <MeDataWrapper>
       <div onClick={() => click()}>#{data.number ? data.number : "-"}</div>
-      <div>{data.username ? data.username : "-"}</div>
+      <div>{data.name ? data.name : "-"}</div>
       <div>{data.email ? data.email : "-"}</div>
       {files !== [] ? (
         <Guards guardsArr={files} />

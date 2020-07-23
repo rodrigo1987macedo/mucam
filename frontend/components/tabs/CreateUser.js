@@ -11,6 +11,7 @@ import Input from "../common/Input";
 import Loader from "../common/Loader";
 import Table from "../common/Table";
 import Title from "../common/Title";
+import Radio from "../common/Radio";
 
 const cookies = new Cookies();
 
@@ -36,12 +37,16 @@ const Form = styled.form`
       top: -15px;
     }
   }
-  input {
+  input[type="text"] {
     margin: 0 10px 0 0;
     @media (max-width: 1200px) {
       margin: 0 0 30px 0;
     }
   }
+`;
+
+const RadioSelection = styled.div`
+  display: flex;
 `;
 
 function CreateUser({ defaultLastUsers = 5 }) {
@@ -52,7 +57,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
   // Found User initial state
   const [foundUser, setFoundUser] = useState({
     number: undefined,
-    username: undefined,
+    name: undefined,
     email: undefined,
     guard: undefined,
     ci: undefined
@@ -64,6 +69,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
   // Create User initial state
   const [createUser, setCreateUser] = useState({
     username: "",
+    name: "",
     number: "",
     email: "",
     ci: "",
@@ -78,7 +84,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
   // to be rendered in last users table
   const [lastUsers, setLastUsers] = useState({
     number: [],
-    username: [],
+    name: [],
     email: [],
     ci: [],
     updated: [],
@@ -89,6 +95,8 @@ function CreateUser({ defaultLastUsers = 5 }) {
   const [fetchedUsersQuantity, setFetchedUserQuantity] = useState(10);
   // Boolean setting the capacity of the table to load more Last Users
   const [showMoreLastUsersButton, setShowMoreLastUsersButton] = useState(true);
+  // radio change for search
+  const [searchTerm, setSearchTerm] = useState(table.NUMBER);
 
   useEffect(() => {
     lastUsersHandler(0);
@@ -96,7 +104,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
 
   const updateLastUsers = (res, from) => {
     let number = [].concat(from === 0 ? [] : lastUsers.number);
-    let username = [].concat(from === 0 ? [] : lastUsers.username);
+    let name = [].concat(from === 0 ? [] : lastUsers.name);
     let email = [].concat(from === 0 ? [] : lastUsers.email);
     let ci = [].concat(from === 0 ? [] : lastUsers.ci);
     let updated = [].concat(from === 0 ? [] : lastUsers.updated);
@@ -109,7 +117,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
         }
       } else {
         number.push(item.number);
-        username.push(item.username);
+        name.push(item.name);
         email.push(item.email);
         ci.push(item.ci);
         updated.push(item.updated_at);
@@ -119,7 +127,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
     });
     const updatedLastUsers = {
       number,
-      username,
+      name,
       email,
       ci,
       updated,
@@ -154,6 +162,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
     setErrorCreateUserMessage("");
     let newUser = createUser;
     newUser.password = createUser.ci;
+    newUser.username = createUser.email;
     trackPromise(
       axios
         .post(`${process.env.API_URL}/users`, newUser, {
@@ -165,6 +174,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
           lastUsersHandler(0);
           setCreateUser({
             username: "",
+            name: "",
             number: "",
             email: "",
             ci: "",
@@ -182,11 +192,18 @@ function CreateUser({ defaultLastUsers = 5 }) {
     );
   }
 
-  function findUser(employeeNumber) {
+  function findUser(value) {
+    let selectedSearchTerm = "number";
+    if (searchTerm === table.MAIL) {
+      selectedSearchTerm = "email";
+    }
+    if (searchTerm === table.CI) {
+      selectedSearchTerm = "ci";
+    }
     setErrorFoundUserMessage(null);
     trackPromise(
       axios
-        .get(`${process.env.API_URL}/users?number=${employeeNumber}`, {
+        .get(`${process.env.API_URL}/users?${selectedSearchTerm}=${value}`, {
           headers: {
             Authorization: `Bearer ${cookies.get("guards")}`
           }
@@ -196,14 +213,14 @@ function CreateUser({ defaultLastUsers = 5 }) {
             setErrorFoundUserMessage(status.ERROR_USER);
           }
           let number = [];
-          let username = [];
+          let name = [];
           let email = [];
           let guard = [];
           let ci = [];
           let id = [];
           res.data.map(item => {
             number.push(item.number);
-            username.push(item.username);
+            name.push(item.name);
             email.push(item.email);
             guard.push(item.file);
             ci.push(item.ci);
@@ -211,7 +228,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
           });
           setFoundUser({
             number,
-            username,
+            name,
             email,
             guard,
             ci,
@@ -251,12 +268,16 @@ function CreateUser({ defaultLastUsers = 5 }) {
     setFindUserNumber(event.target.value);
   }
 
+  function onRadioChange(e) {
+    setSearchTerm(e.target.value);
+  }
+
   return (
     <>
       <Title text={tabs.USERS.FIND} tag="h1" />
       <Form onSubmit={e => findUserHandler(e)}>
         <Input
-          badge="Número"
+          badge={searchTerm}
           type="text"
           autocomplete="on"
           value={findUserNumber}
@@ -264,13 +285,23 @@ function CreateUser({ defaultLastUsers = 5 }) {
           rightMargin={true}
         />
         <Button text={tabs.USERS.FIND} />
+        <RadioSelection onChange={onRadioChange}>
+          <Radio
+            value={table.NUMBER}
+            name="search-term"
+            badge={table.NUMBER}
+            defaultChecked={true}
+          />
+          <Radio value={table.MAIL} name="search-term" badge={table.MAIL} />
+          <Radio value={table.CI} name="search-term" badge={table.CI} />
+        </RadioSelection>
       </Form>
       <Loader error={errorFoundUserMessage} area="find-user" />
       <Table
         onUpdate={() => updateFoundUsers(0)}
         data={[
           { heading: table.NUMBER, content: foundUser.number },
-          { heading: table.NAME, content: foundUser.username },
+          { heading: table.NAME, content: foundUser.name },
           { heading: table.MAIL, content: foundUser.email },
           { heading: table.GUARD, content: foundUser.guard },
           { heading: table.CI, content: foundUser.ci },
@@ -281,11 +312,11 @@ function CreateUser({ defaultLastUsers = 5 }) {
       <Title text={tabs.USERS.CREATE} tag="h1" />
       <Form onSubmit={e => createUserHandler(e)}>
         <Input
-          name="username"
+          name="name"
           autocomplete="on"
           badge="Nombre"
           type="text"
-          value={createUser.username}
+          value={createUser.name}
           onChange={handleCreateUserChange}
         />
         <Input
@@ -320,7 +351,7 @@ function CreateUser({ defaultLastUsers = 5 }) {
         onUpdate={() => updateFoundUsers(0)}
         data={[
           { heading: table.NUMBER, content: lastUsers.number },
-          { heading: table.NAME, content: lastUsers.username },
+          { heading: table.NAME, content: lastUsers.name },
           { heading: table.MAIL, content: lastUsers.email },
           { heading: table.CI, content: lastUsers.ci },
           { heading: table.DATE_MOD, content: lastUsers.updated },

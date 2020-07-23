@@ -8,7 +8,7 @@ import Input from "../common/Input";
 import { trackPromise } from "react-promise-tracker";
 import Loader from "../common/Loader";
 import Guards from "../common/Guards";
-import { status } from '../../constants/status'
+import { status } from "../../constants/status";
 
 const cookies = new Cookies();
 
@@ -61,7 +61,7 @@ function Edit({ id, onUpdate, api }) {
       .then(res => {
         let data = {
           number: res.data.number,
-          username: res.data.username,
+          name: res.data.name,
           email: res.data.email,
           ci: res.data.ci,
           files: res.data.file
@@ -86,7 +86,7 @@ function Edit({ id, onUpdate, api }) {
         .then(() => {
           setErrorDeleteMessage(null);
           setSuccessDeleteMessage(status.PROCESS_GUARDS_DELETION_FINISHED);
-          fetchUser()
+          fetchUser();
           onUpdate();
         })
         .catch(() => {
@@ -101,6 +101,8 @@ function Edit({ id, onUpdate, api }) {
     setErrorEditMessage(null);
     setSuccessEditMessage(null);
     e.preventDefault();
+    user.email = user.email.toLowerCase()
+    user.username = user.email.toLowerCase()
     trackPromise(
       axios
         .put(`${api}/users/${id}`, user, {
@@ -146,9 +148,9 @@ function Edit({ id, onUpdate, api }) {
             <Input
               badge="Nombre"
               autocomplete="on"
-              name="username"
+              name="name"
               type="text"
-              value={user.username}
+              value={user.name}
               onChange={handleUserEdit}
               rightMargin={true}
             />

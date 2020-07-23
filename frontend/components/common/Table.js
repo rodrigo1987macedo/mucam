@@ -104,6 +104,16 @@ const Img = styled.img`
 `;
 
 function Table({ data, onUpdate }) {
+  function monthDisplay(guard) {
+    let nameInMonth = guard.name.split(".")[0].split("-")[1];
+    if (nameInMonth) {
+      return nameInMonth;
+    } else {
+      let d = new Date(guard.created_at);
+      return d.getMonth() + 1;
+    }
+  }
+
   return (
     <TableWrapper>
       {data.map((column, i) => {
@@ -130,9 +140,7 @@ function Table({ data, onUpdate }) {
                               target="_blank"
                             >
                               <Month>
-                                <div>
-                                  {guard.name.split(".")[0].split("-")[1]}
-                                </div>
+                                <div>{monthDisplay(guard)}</div>
                               </Month>
                               <Img src="file.png" alt="guardia" />
                             </Guard>

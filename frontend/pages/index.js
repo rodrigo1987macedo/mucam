@@ -59,7 +59,7 @@ export default () => {
     trackPromise(
       axios
         .post(`${process.env.API_URL}/auth/forgot-password`, {
-          email: userIdentifier
+          email: userIdentifier.toLowerCase()
         })
         .then(() => {
           setEmailSent(status.SENT_EMAIL);
@@ -82,7 +82,7 @@ export default () => {
       axios
         .post(`${process.env.API_URL}/auth/local`, {
           identifier: userIdentifier,
-          password: userPassword
+          password: userPassword.toLowerCase()
         })
         .then(res => {
           if (res.data) {
