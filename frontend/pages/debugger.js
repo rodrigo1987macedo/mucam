@@ -29,7 +29,7 @@ function Debugger() {
   }
 
   function getUsers() {
-    axios.get(`${process.env.API_URL}/findall`).then(res => {
+    axios.get(`${process.env.API_URL}/users`).then(res => {
       console.log(res);
       let usersInfoArray = [];
       res.data.map(user => {
