@@ -29,26 +29,20 @@ function Debugger() {
   }
 
   function getUsers() {
-    axios
-      .get(`${process.env.API_URL}/findall`, {
-        headers: {
-          Authorization: `Bearer ${cookies.get("guards")}`
-        }
-      })
-      .then(res => {
-        console.log(res);
-        let usersInfoArray = [];
-        res.data.map(user => {
-          usersInfoArray.push({
-            id: user.id,
-            username: user.username,
-            email: user.email.toLowerCase(),
-            name: user.name
-          });
+    axios.get(`${process.env.API_URL}/findall`).then(res => {
+      console.log(res);
+      let usersInfoArray = [];
+      res.data.map(user => {
+        usersInfoArray.push({
+          id: user.id,
+          username: user.username,
+          email: user.email.toLowerCase(),
+          name: user.name
         });
-        console.log("usersInfoArray: ", usersInfoArray);
-        setUsersInfo(usersInfoArray);
       });
+      console.log("usersInfoArray: ", usersInfoArray);
+      setUsersInfo(usersInfoArray);
+    });
   }
 
   return (
