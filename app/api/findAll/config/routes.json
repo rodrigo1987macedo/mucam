@@ -1,9 +1,0 @@
-{
-  "routes": [
-    {
-      "method": "GET",
-      "path": "/findall",
-      "handler": "FindAll.findall"
-    }
-  ]
-}
