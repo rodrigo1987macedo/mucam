@@ -7,6 +7,7 @@ const BaseModal = styled.div`
   height: ${props => (props.small ? "260px" : "80vh")};
   padding: 5px;
   width: 700px;
+  overflow-y: scroll;
   @media (max-width: 800px) {
     width: 400px;
   }
