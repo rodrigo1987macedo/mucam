@@ -8,6 +8,7 @@ import Loader from "../common/Loader";
 import Table from "../common/Table";
 import { table } from "../../constants/table";
 import { status } from "../../constants/status";
+import getUsersReachment from "./reach/getReachedUsers";
 
 const cookies = new Cookies();
 
@@ -37,18 +38,19 @@ const ReachedUsersBar = styled.div`
 function Reach({ api }) {
   const [reached, setReached] = useState([]);
   const [unreached, setUnreached] = useState([]);
-  const [unreachedUsers, setUnrechedUsers] = useState({
-    unreachedNumbersArr: undefined,
-    undefinedUsernameArr: undefined,
-    undefinedEmailArr: undefined
-  });
-  const [forgottenUsers, setForgotenUsers] = useState({
-    forgottenNumberArr: undefined,
-    forgottenUsernameArr: undefined,
-    forgottenEmailArr: undefined
-  });
+  //
+  const [unreachedNumbers, setUnreachedNumbers] = useState([]);
+  const [unreachedUsernames, setUnrechedUsernames] = useState([]);
+  const [unreachedEmails, setUnrechedEmails] = useState([]);
+  //
+  const [forgottenNumbers, setForgottenNumbers] = useState([]);
+  const [forgottenUsernames, setForgottenUsernames] = useState([]);
+  const [forgottenEmails, setForgottenEmails] = useState([]);
+  //
   const [resultMessage, setResultMessage] = useState();
   const [errorMessage, setErrorMessage] = useState();
+
+  const [reachRequests, setReachRequests] = useState(990);
 
   const forgottenThresholdModifier = 6;
 
@@ -60,83 +62,89 @@ function Reach({ api }) {
     forgottenThreshold.getMonth() - forgottenThresholdModifier
   );
 
-  useEffect(() => {
-    trackPromise(
-      axios
-        .get(`${api}/users`, {
-          headers: {
-            Authorization: `Bearer ${cookies.get("guards")}`
-          }
-        })
-        .then(res => {
-          let reachedArr = [];
-          let unreachedArr = [];
-          //
-          let unreachedNumbersArr = [];
-          let unreachedUsernamesArr = [];
-          let unreachedEmailsArr = [];
-          //
-          let forgottenNumbersArr = [];
-          let forgottenUsernamesArr = [];
-          let forgottenEmailsArr = [];
-          res.data.map(item => {
-            let lastFile = item.file.slice(-1)[0];
-            if (lastFile) {
-              // FORGOTTEN USERS
-              if (
-                parseInt(Date.parse(lastFile.updated_at), 10) <
-                parseInt(Date.parse(forgottenThreshold), 10)
-              ) {
-                // updated_at date of last file is prior than forgottenThreshold
-                forgottenNumbersArr.push(item.number);
-                forgottenUsernamesArr.push(item.name);
-                forgottenEmailsArr.push(item.email);
-              }
-              // UNREACHED USERS
-              if (
-                !item.seen ||
-                parseInt(Date.parse(lastFile.updated_at), 10) >
-                  parseInt(Date.parse(item.seen), 10)
-              ) {
-                // seen date is prior than updated_at of last file
-                unreachedArr.push(item);
-                //
-                unreachedNumbersArr.push(item.number);
-                unreachedUsernamesArr.push(item.name);
-                unreachedEmailsArr.push(item.email);
-              }
-              // REACHED USERS
-              if (
-                parseInt(Date.parse(lastFile.updated_at), 10) <
-                parseInt(Date.parse(item.seen), 10)
-              ) {
-                // seen date is posterior to updated_at of last file
-                reachedArr.push(item);
+  function concatenate(state, value) {
+    if (state) {
+      return state.concat(value);
+    } else return value;
+  }
+
+  function usersReachmentChain(usersCount, reachRequests) {
+    if (usersCount >= reachRequests - 990) {
+      trackPromise(
+        axios
+          .get(
+            `${api}/users?_start=${reachRequests -
+              990}&_limit=${reachRequests}`,
+            {
+              headers: {
+                Authorization: `Bearer ${cookies.get("guards")}`
               }
             }
-          });
-          setReached(reachedArr);
-          setUnreached(unreachedArr);
-          setForgotenUsers({
-            forgottenNumbersArr,
-            forgottenUsernamesArr,
-            forgottenEmailsArr
-          });
-          setUnrechedUsers({
-            unreachedNumbersArr,
-            unreachedUsernamesArr,
-            unreachedEmailsArr
-          });
-          setResultMessage(
-            `${reachedArr.length} de ${reachedArr.length + unreachedArr.length}`
-          );
-        })
-        .catch(() => {
-          setErrorMessage(status.ERROR_SERVER);
-        }),
-      "reach"
-    );
-  }, []);
+          )
+          .then(res => {
+            const {
+              reachedArr,
+              unreachedArr,
+              forgottenNumbersArr,
+              forgottenUsernamesArr,
+              forgottenEmailsArr,
+              unreachedNumbersArr,
+              unreachedUsernamesArr,
+              unreachedEmailsArr
+            } = getUsersReachment(res, forgottenThreshold);
+            //
+            setReached(concatenate(reached, reachedArr));
+            //
+            setUnreached(concatenate(unreached, unreachedArr));
+            //
+            setForgottenNumbers(
+              concatenate(forgottenNumbers, forgottenNumbersArr)
+            );
+            setForgottenUsernames(
+              concatenate(forgottenUsernames, forgottenUsernamesArr)
+            );
+            setForgottenEmails(
+              concatenate(forgottenEmails, forgottenEmailsArr)
+            );
+            //
+            setUnreachedNumbers(
+              concatenate(unreachedNumbers, unreachedNumbersArr)
+            );
+            setUnrechedUsernames(
+              concatenate(unreachedUsernames, unreachedUsernamesArr)
+            );
+            setUnrechedEmails(
+              concatenate(unreachedEmails, unreachedEmailsArr)
+            );
+            setResultMessage(
+              `${concatenate(reached, reachedArr).length} de ${concatenate(
+                reached,
+                reachedArr
+              ).length + concatenate(unreached, unreachedArr).length}`
+            );
+          })
+          .catch(() => {
+            setErrorMessage(status.ERROR_SERVER);
+          })
+          .finally(() => {
+            setReachRequests(reachRequests + 990);
+          }),
+        "reach"
+      );
+    }
+  }
+
+  useEffect(() => {
+    axios
+      .get(`${api}/users/count`, {
+        headers: {
+          Authorization: `Bearer ${cookies.get("guards")}`
+        }
+      })
+      .then(res => {
+        usersReachmentChain(res.data, reachRequests);
+      });
+  }, [reachRequests]);
 
   return (
     <>
@@ -157,13 +165,13 @@ function Reach({ api }) {
           data={[
             {
               heading: table.NUMBER,
-              content: unreachedUsers.unreachedNumbersArr
+              content: unreachedNumbers
             },
             {
               heading: table.NAME,
-              content: unreachedUsers.unreachedUsernamesArr
+              content: unreachedUsernames
             },
-            { heading: table.MAIL, content: unreachedUsers.unreachedEmailsArr }
+            { heading: table.MAIL, content: unreachedEmails }
           ]}
         />
       </Result>
@@ -177,13 +185,13 @@ function Reach({ api }) {
           data={[
             {
               heading: table.NUMBER,
-              content: forgottenUsers.forgottenNumbersArr
+              content: forgottenNumbers
             },
             {
               heading: table.NAME,
-              content: forgottenUsers.forgottenUsernamesArr
+              content: forgottenUsernames
             },
-            { heading: table.MAIL, content: forgottenUsers.forgottenEmailsArr }
+            { heading: table.MAIL, content: forgottenEmails }
           ]}
         />
       </Result>
